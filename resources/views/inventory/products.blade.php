@@ -94,32 +94,32 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Issue Stock: {{ $product->name }}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">
+                                                        <button type="button" class="close" data-bs-dismiss="modal">
                                                             <span>&times;</span>
                                                         </button>
                                                     </div>
                                                     <form action="{{ route('inventory.issue-stock') }}" method="POST">
                                                         @csrf
+                                                        <input type="text" name="inventory_product_id" value="{{ $product->id }}">
+                                                        <input type="text" name="issued_to_id" id="hidden_issued_to_id_{{ $product->id }}">
                                                         <div class="modal-body">
-                                                            <input type="hidden" name="inventory_product_id" value="{{ $product->id }}">
                                                             <div class="form-group">
                                                                 <label>Quantity to Issue</label>
-                                                                <input type="number" name="quantity" 
-                                                                       class="form-control" 
-                                                                       max="{{ $product->quantity }}" 
-                                                                       required>
+                                                                <input type="number" name="quantity" class="form-control" max="{{ $product->quantity }}" required>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label>Issue To</label>
-                                                                <select name="issued_to_type" class="form-control" required>
+                                                                <select name="issued_to_type" id="issued_to_type_{{ $product->id }}" 
+                                                                        class="form-control issued_to_type" 
+                                                                        data-product-id="{{ $product->id }}" 
+                                                                        required>
+                                                                    <option value="">-- Select Type --</option>
                                                                     <option value="employee">Employee</option>
                                                                     <option value="client">Client</option>
                                                                 </select>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label>Recipient ID</label>
-                                                                <input type="number" name="issued_to_id" 
-                                                                       class="form-control" required>
+                                                            <div class="form-group" id="issued_to_container_{{ $product->id }}">
+                                                                <!-- Dynamic input field will be inserted here -->
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -140,5 +140,76 @@
     </div>
 </div>
 @endsection
+@push('script')
+<script>
+   $(document).on('change', '.issued_to_type', function () {
+    const productId = $(this).data('product-id');
+    const selectedType = $(this).val();
+    const container = $(`#issued_to_container_${productId}`);
+    const hiddenInput = $(`#hidden_issued_to_id_${productId}`);
+    
+    if (selectedType === 'employee') {
+        $.ajax({
+            url: '/admin/employees/get-employees',
+            method: 'GET',
+            success: function (data) {
+                let options = data.map(employee =>
+                    `<option value="${employee.id}">${employee.name} (ID: ${employee.id})</option>`
+                ).join('');
+                container.html(`
+                    <label>Select Employee</label>
+                    <select class="form-control dynamic_issued_to_id" required>
+                        <option value="">-- Select Employee --</option>
+                        ${options}
+                    </select>
+                `);
 
+                // Update the hidden input when the dynamic dropdown changes
+                container.find('.dynamic_issued_to_id').on('change', function () {
+                    hiddenInput.val($(this).val());
+                });
+            },
+            error: function () {
+                alert('Failed to fetch employee data.');
+            }
+        });
+    } else if (selectedType === 'client') {
+        $.ajax({
+            url: '/admin/clients/get-clients',
+            method: 'GET',
+            success: function (data) {
+                let options = data.map(client =>
+                    `<option value="${client.id}">${client.business_name} (ID: ${client.id})</option>`
+                ).join('');
+                container.html(`
+                    <label>Select Client</label>
+                    <select class="form-control dynamic_issued_to_id" required>
+                        <option value="">-- Select Client --</option>
+                        ${options}
+                    </select>
+                `);
+
+                // Update the hidden input when the dynamic dropdown changes
+                container.find('.dynamic_issued_to_id').on('change', function () {
+                    hiddenInput.val($(this).val());
+                });
+            },
+            error: function () {
+                alert('Failed to fetch client data.');
+            }
+        });
+    } else {
+        container.html('');
+        hiddenInput.val(''); // Reset hidden input if no type selected
+    }
+});
+
+</script>
+
+<script>
+    $('form').on('submit', function () {
+    console.log($(this).serializeArray()); // Inspect all form data
+});
+</script>
+@endpush
                     

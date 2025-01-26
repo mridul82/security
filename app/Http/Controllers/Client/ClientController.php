@@ -93,4 +93,11 @@ public function destroy(Client $client)
 
     return redirect()->route('clients.index')->with('success', 'Client deleted successfully');
 }
+
+public function getClients()
+{
+    $clients = Client::select('id', 'business_name')->get();
+        return response()->json($clients);
+}
+
 }

@@ -133,4 +133,11 @@ class EmployeeController extends Controller
         //dd($employee);
         return view('employees.show', compact('employee'));
     }
+
+
+    public function getEmployees()
+    {
+        $employees = Employee::select('id', 'name')->get();
+        return response()->json($employees);
+    }
 }

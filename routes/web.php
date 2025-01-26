@@ -11,6 +11,8 @@ use App\Http\Controllers\Employee\SalaryController;
 use App\Http\Controllers\Employee\AdvancePaymentController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Inventory\InventoryController;
+use App\Http\Controllers\Inventory\StockIssuanceController;
+
 
 
 /*
@@ -56,6 +58,8 @@ Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function(){
     Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     Route::get('/employees/{id}/show', [EmployeeController::class, 'show'])->name('employees.show');
+    //ajax
+    Route::get('/employees/get-employees', [EmployeeController::class, 'getEmployees'])->name('employees.get-employees');
 
     //salary management
     Route::get('employees/{employee}/salaries', [SalaryController::class, 'index'])
@@ -85,14 +89,18 @@ Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function(){
     Route::post('clients', [ClientController::class, 'store'])
 
         ->name('clients.store');
-    Route::get('clients/{client}', [ClientController::class, 'show'])
-        ->name('clients.show');
+    // Route::get('clients/{client}', [ClientController::class, 'show'])
+    //     ->name('clients.show');
     Route::get('clients/{client}/edit', [ClientController::class, 'edit'])
         ->name('clients.edit');
     Route::put('clients/{client}', [ClientController::class, 'update'])
         ->name('clients.update');
     Route::delete('clients/{client}', [ClientController::class, 'destroy'])
         ->name('clients.destroy');
+
+    //from ajax
+    Route::get('clients/get-clients', [ClientController::class, 'getClients'])
+        ->name('clients.get-clients');
 
 
     //inventory management
@@ -106,7 +114,14 @@ Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function(){
     Route::post('/inventory/add-product', [InventoryController::class, 'addProduct'])->name('inventory.add-product');
     Route::post('/inventory/issue-stock', [InventoryController::class, 'issueStock'])->name('inventory.issue-stock');
 
-   
+   //stock issuances
+   Route::get('/stock-issuances', [StockIssuanceController::class, 'index'])->name('stock-issuances.index');
+   Route::get('/stock-issuances/create', [StockIssuanceController::class, 'create'])->name('stock-issuances.create');
+   Route::post('/stock-issuances', [StockIssuanceController::class, 'store'])->name('stock-issuances.store');
+   Route::get('/stock-issuances/{issuance}', [StockIssuanceController::class, 'show'])->name('stock-issuances.show');
+   Route::get('/stock-issuances/{issuance}/edit', [StockIssuanceController::class, 'edit'])->name('stock-issuances.edit');
+   Route::put('/stock-issuances/{issuance}', [StockIssuanceController::class, 'update'])->name('stock-issuances.update');
+   Route::delete('/stock-issuances/{issuance}', [StockIssuanceController::class, 'destroy'])->name('stock-issuances.destroy');
 
 
 

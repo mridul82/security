@@ -63,13 +63,15 @@ class InventoryController extends Controller
 
     public function issueStock(Request $request)
     {
+        //dd($request->all());
         $validatedData = $request->validate([
             'inventory_product_id' => 'required|exists:inventory_products,id',
             'quantity' => 'required|integer|min:1',
             'issued_to_type' => 'required|in:employee,client',
+            
             'issued_to_id' => 'required|integer'
         ]);
-
+       // dd($validatedData);
         // Create stock issuance record
         $issuance = StockIssuance::create([
             'inventory_product_id' => $validatedData['inventory_product_id'],

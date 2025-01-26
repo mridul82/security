@@ -463,14 +463,14 @@
                       <span>Products</span>
                     </a>
                   </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link collapsed" href="{{url('/admin/branch-stock')}}">
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{url('/admin/stock-issuances')}}">
                       <i class="bi bi-database"></i>
-                      <span>Branch Stock Lists</span>
+                      <span>Stock Issue Lists</span>
                     </a>
                   </li>
 
-                  <li class="nav-item">
+                  {{-- <li class="nav-item">
                     <a class="nav-link collapsed" href="{{url('/admin/damages')}}">
                       <i class="bi bi-database"></i>
                       <span>Damage Stock Lists</span>
